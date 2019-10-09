@@ -46,10 +46,12 @@ def get_carriers(code):
     package = db.rastreiobot.find_one({
         "code": code
     })
+    carrier = package.get('carrier')
     
-    if package:
-        carriers = package['carrier']
-        return carriers if isinstance(carriers, list) else [carriers]
+    if package and carrier:
+        # We need to check the carrier instance type because we can have it
+        # as strings and lists in the database level.
+        return carrier if isinstance(carrier, list) else [carriers]
 
     carriers = trackingmore.detect_carrier_from_code(code)
     carriers.sort(key=lambda carrier: carrier['code'])
